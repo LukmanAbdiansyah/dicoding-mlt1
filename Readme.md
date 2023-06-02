@@ -1,3 +1,4 @@
+
 # Klasifikas Fasies Menggunakan Machine Learning - Lukman Abdiansyah
 ## Domain Proyek
 Klasifikasi facies memainkan peran penting dalam memahami lingkungan deposisi dan sifat-sifat reservoir dari formasi batuan bawah permukaan. Secara tradisional, klasifikasi facies dilakukan secara manual oleh ahli geologi berdasarkan keahlian mereka dan analisis dari data sumur, sampel inti, dan data seismik. Namun, proses ini memakan waktu lama, subjektif, dan rentan terhadap kesalahan manusia.
@@ -50,7 +51,7 @@ Berdasarkan Goals maka:
 - evaluasi pembanding model akan menggunakan MSE atau Mean Squared Error
 
 # Data Understanding
-Dataset yang digunakan berdasal dari kaggle dengan nama [Well log Dataset](https://www.kaggle.com/datasets/imeintanis/well-log-facies-dataset) yang memiliki jumlah data 1359 baris dan 21 kolom. Dataset merupakan hasil dari penggabungan dari website [Gadget360](ttps://www.kgs.ku.edu/Hugoton/TypeLogs/index.html). Dataset berisikan tentang 5 pengukuran log wireline, dua indikator dan label fasies dalam interval setengah kaki.
+Dataset yang digunakan berdasal dari kaggle dengan nama [Well log Dataset](https://www.kaggle.com/datasets/imeintanis/well-log-facies-dataset) yang memiliki jumlah data 3233 baris dan 11 kolom. Dataset merupakan hasil dari penggabungan dari website [KGS](ttps://www.kgs.ku.edu/Hugoton/TypeLogs/index.html). Dataset berisikan tentang 5 pengukuran log wireline, dua indikator dan label fasies dalam interval setengah kaki.
 
 ## Sample Data
 Ada pun sample data yang bisa dilihat seperti dibawah ini.
@@ -150,196 +151,207 @@ Pada gambar dapat dilihat pada data memiliki kolom 9 kolom numerik atau angka se
 Tabel 3: pengecekan NaN 
 Pada tabel 2 dan 3 telah di lakukan pengecekan apakah ada missing value pada data kategorikal dan nilai null/0 pada data numerikal. Dan hasilnya tidak ada data yang missing dan null
 
-![top10](https://user-images.githubusercontent.com/60514291/239754897-6b95dec0-3029-47af-a5c7-9042d6cd1699.png)
-Gambar 1 : urutan fasies terbanyak pada formasi hugoton dan panoma
-Pada dataset yang memiliki data ponsel paling banyak adalah Ponsel bermerk Intex dan motorola berada di urutan ke 10.
+![urutan fasies](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/09b73870-6309-41a0-ad66-bacad6fe5e92)
+Gambar 1 : urutan sumur dengan jumlah sampel terbanyak pada formasi hugoton dan panoma
+Pada gambar 1 yang memiliki data sumur paling banyak yaitu sumur Cross H Castle.
+![urutan fasies](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/d92edbd1-a9c4-48bc-906a-c82293121769)
+Gambar 2 : urutan fasies terbanyak pada formasi hugoton dan panoma
+Pada gambar 2 yang memiliki data fasies paling banyak yaitu Nonmarine coarse siltstone.
 
-![hist](https://user-images.githubusercontent.com/60514291/239754920-9debd797-1c19-4df3-9e67-45c0942e55d6.png)
-Gambar 2: Persebaran Dataset
+![hist](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/333033fd-8866-4f10-b434-11897bb04ad8)
+Gambar 3: Persebaran Dataset
 
 Pada gambar diatas ada beberapa kesimpulan yaitu :
-*   Pada kolom price, ponsel dengan harga mahal cenderung lebih sedikit daripada ponsel murah 
-*   Histogram pada 'price' lebih miring ke kanan atau distribusi miring kanan
-*   Pada pada, ponsel paling banyak berada pada harga di bawah 10000
+*   Pada kolom RELPOS (Relative Position), jumlah nilai relpos cenderung sama untuk setiap titik
+*   Pada kolom PHIND (porositas neutron-density), persebaran porositas cenderung pada 5-22% dan memiliki skewness positif
+*   Pada kolom GR (Gamma-ray) memiliki skewness positif, ini menyimpulkan bahwa formasi hugoton panoma cukup clean (kandungan shale dan silt tidak sebesar resrvoir pada umumnya).
 
-![image](https://user-images.githubusercontent.com/60514291/239755894-c780e92e-ef5f-473c-9713-f505c76788dc.png)
-Gambar 4 : Multivariate Analysis OS with Average Price
+![hist](https://user-images.githubusercontent.com/74924298/242853417-c881f986-2778-4219-9f7c-3a98fa0767f1.jpg)
+Gambar 4: Well Log Visualization untuk sumur SHANKLE (sebagai representasi)
+Dari gambar 3 terlihat bahwa zona reservoir berada pada kedalaman 2975-2990 ft, hal ini karena pada zona tersebut GR kecil, resistivitas besar (ILD), dan porositas masih cukup baik (PHIND).
 
-Pada gambar diatas , OS android memiliki rata-rata harga paling tinggi
+![pairplotall](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/aa961e0b-4216-43f0-9595-f48070233fb1)
+Gambar 5 : Korelasi antar fasies dengan fitur yang lain secara pairplot
+pada pairplot diatas terlihat bahwa fasies memiliki distribusi yang berkolerasi positif dengan feature NM_M dan PE
 
-![image](https://user-images.githubusercontent.com/60514291/239755998-ea9c9ca4-dbbf-425b-8974-26206fe3b62a.png)
-Gambar 5 : Multivariate Analysis gps with Average Price
-
-Harga Handphone rata-rata lebih mahal apabila memiliki GPS.
-
-![image](https://user-images.githubusercontent.com/60514291/239756106-4606ae46-2031-452c-9650-500496067d69.png)
-Gambar 6 : Multivariate Analysis 4g with Average Price
-Pada gambar diatas, harga rata-rata ponsel lebih mahal apabila memiliki sinyal 4g
-
-![pairplotall](https://user-images.githubusercontent.com/60514291/239754965-9193e343-4d0e-4fd9-8336-68c0e95e5129.png)
-Gambar 7 : Korelasi antar price dengan fitur yang lain secara pairplot
-
-Walaupun terlihat acak, namun apabila diperhatikan tiap fitur numerik memiliki korelasi positif terhadap 'price', semakin ke kanan harga pun semakin naik
-
-![corrmat](https://user-images.githubusercontent.com/60514291/239755032-44b5c830-e116-46ae-b587-a76b54ae1565.png)
-Gambar 8:Correlation Matrix
-Untuk tiap fitur memiliki korelasi positif namun tidak terlalu tinggi, dimana fitur yang paling berpengaruh yaitu ram,internal dan resolusi layar.
-Sedangkan pada fitur baterai, memiliki korelasi yang paling kecil diantara fitur yang lainnya
+![heatmap](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/b9375e19-e3d9-4d35-bdb8-4f790afa9df9)
+Gambar 6: Correlation Matrix
+Dari heatmap diatas fasies memiliki korelasi positif yang cukup tinggi untuk , sedangkan fitur yang lain memiliki korelasi yang tidak terlalu besar .
+Dan pada fitur relpos, memiliki korelasi yang paling kecil diantara fitur yang lainnya.
 
 ### Result EDA
-Sejauh tahap yang dilakukan, seperti menghapus outliers maka tersisa data sebanyak 938 baris data yang sudah bersih dari outliers.
+Sejauh tahap yang dilakukan, karena data sudah clean dan tidak perlu melakukan handling outlier karena outlier tetap digunakan.
 
 # Data Preparation
 ## Proses yang dilakukan
--   Menerapkan One Hot Encoding pada data Categorical dengan menggunakan pandas library pada fungsi pd.get_dummies()
--   Menerapkan PCA pada data yang memiliki kesamaan arti dan nilai dengan library sklearn PCA
--   Membagi data set antara training dan testing dengan library sklearn dengan fungsi train_test_split() dengan perbandingan 80:20 sehingga memiliki 750 data train dan 188 data testing
--   Menerapan Standard Scaler pada data numerikal dengan library sklearn dengan fungsi StandarScaler
+-   Memberi label untuk setiap fasies dengan angka
+-   Memisahkan data sumur NEWBY untuk dilakukan blind data testing untuk satu log sumur
+-   Melakukan standardisasi untuk data feature
+-   Membagi data set antara training dan testing dengan library sklearn dengan fungsi train_test_split() dengan perbandingan 80:20 sehingga memiliki 2215 data train dan 554 data testing
 
 ## Alasan Pengunaan
-- One Hot encoding digunakan untuk mengubah variabel kategorikal menjadi representasi numerik yang dapat digunakan dalam model machine learning. serta dapat meningkatan performa model dalam melakukan prediksi karena hanya menggunakan nilai biner. Hal ini sangat berguna karena algoritma machine learning umumnya membutuhkan data numerik sebagai input.
-- Penggunaan PCA digunakan untuk mengurangi dimensi dari dataset yang memiliki fitur yang sangat banyak dimana data yang dimiliki mengandung informasi yang redundan atau sama antar banyak fitur yang serupa sehingga cukup dijadikan satu dimensi saja. Hal ini juga bertujuan untuk meningkatkan performa model. Karena terlalu banyak fitur dapat mengakibatkan masalah dalam pemodelan seperti overfitting atau kompleksitas yang berlebihan.Dengan menggunakan PCA, kita dapat mengurangi dimensi fitur-fitur tersebut menjadi sejumlah komponen utama yang paling mengandung informasi.
-- Membagi dataset kedalam bentuk training dan testing adalah agar model dapat di evaluasi nantinya. Selain itu, pembagian ini dapat juga untuk mendeteksi apakah model mengalami overfitting jika model memiliki performa yang sangat baik pada data pelatihan tetapi performa yang buruk pada data pengujian.
+- pemberian label angka memungkinkan representasi numerik untuk data kategori atau kualitatif. Hal ini memungkinkan algoritma pembelajaran mesin atau model statistik untuk memproses data tersebut, karena umumnya algoritma-algoritma tersebut membutuhkan input berupa angka.
+
+- Pemisahan data sumur NEWBY digunakan untuk dilakukan blind data testing dalam satu log sumur
+- Data splitting dilakukan untuk evaluasi obyektif kinerja model, mencegah overfitting, dan memisahkan data pengujian yang tidak digunakan dalam proses pelatihan untuk menghindari informasi bocor. Pembagian data memungkinkan tuning parameter yang efektif dan pemahaman yang lebih baik tentang variasi kinerja model.
 - Standar Scaler digunakan untuk menormalkan atau menskalakan data numerik dalam skala yang sama. Menggunakan data dengan skala yang berbeda dapat mengganggu performa model yang menggunakan metrik jarak seperti algoritma SVM. Sehingga, model dapat menormalkan data numerik sehingga memiliki rata-rata nol dan standar deviasi satu. Ini membantu dalam menghilangkan perbedaan skala dan memastikan bahwa setiap fitur diperlakukan secara adil dan tidak mendominasi pengaruhnya terhadap hasil model.
 
 # Modeling
-Pada proyek ini akan menggunakan model SVR sesuai dengan referensi sebelumnya dan juga menggunakan algoritma Huber Regessor berdasarkan hasil dari running data menggunakan library pycaret.
+Digunakan empat algoritma teratas yang memiliki performa yang terbaik berdasarkan hasil dari running data menggunakan library LazyClassifier.
 
-|   Model   |           Algorithm            |    MAE    |       MSE       |     RMSE    |     R2     |   RMSLE   |   MAPE   | TT (Sec) |
-|-----------|-------------------------------|-----------|-----------------|-------------|------------|-----------|----------|----------|
-|   huber   |         Huber Regressor        | 4926.8217 | 109476114.4566  |  10220.0214 |   0.3062   |   0.5269  |  0.4096  |  0.4150  |
-|    knn    |    K Neighbors Regressor       | 6014.3109 | 131721542.8240  |  11249.8804 |   0.1568   |   0.6684  |  0.6604  |  0.4230  |
-|  lightgbm | Light Gradient Boosting Machine| 7512.7058 | 149481917.6927  |  12030.7421 |   0.0284   |   0.8183  |  1.0080  |  0.4430  |
-|     et    |    Extra Trees Regressor       | 7575.7432 | 155341761.4113  |  12271.8095 |  -0.0116   |   0.8261  |  1.0060  |  0.5900  |
-|    ada    |     AdaBoost Regressor         | 7227.6931 | 156073006.1999  |  12294.8434 |  -0.0144   |   0.7995  |  0.9053  |  0.3480  |
-|  xgboost  |   Extreme Gradient Boosting     | 7580.2099 | 155719354.5086  |  12288.7833 |  -0.0148   |   0.8276  |  1.0065  |  0.4730  |
-|    omp    |   Orthogonal Matching Pursuit   | 7582.6384 | 155842850.6352  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.6200  |
-|    llar   |  Lasso Least Angle Regression  | 7582.6383 | 155842848.6985  |  12293.4674 |  -0.0156   |   0.8280  |  1.0070  |  0.5040  |
-|    lar    |      Least Angle Regression    | 7582.6384 | 155842850.6352  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.7020  |
-|    br     |         Bayesian Ridge         | 7582.6385 | 155842851.2002  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.7680  |
-|    lr     |       Linear Regression        | 7582.6384 | 155842850.6352  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.5620  |
-|    en     |          Elastic Net           | 7582.6377 | 155842828.1476  |  12293.4666 |  -0.0156   |   0.8280  |  1.0070  |  0.5610  |
-|   ridge   |        Ridge Regression        | 7582.6384 | 155842850.5385  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.3050  |
-|   lasso   |        Lasso Regression        | 7582.6384 | 155842848.8967  |  12293.4674 |  -0.0156   |   0.8280  |  1.0070  |  0.3680  |
-|   dummy   |        Dummy Regressor         | 7582.6384 | 155842850.6352  |  12293.4675 |  -0.0156   |   0.8280  |  1.0070  |  0.3110  |
-|    rf     |   Random Forest Regressor      | 7614.6345 | 156392402.3966  |  12313.1076 |  -0.0184   |   0.8302  |  1.0131  |  0.3910  |
-|    gbr    |  Gradient Boosting Regressor   | 7609.6841 | 156583555.8053  |  12318.9634 |  -0.0191   |   0.8294  |  1.0118  |  0.4490  |
-|    dt     |   Decision Tree Regressor     | 7656.8606 | 158612810.0040  |  12391.4475 |  -0.0305   |   0.8327  |  1.0205  |  0.3230  |
-|    par    | Passive Aggressive Regressor   | 7442.2487 | 156193958.7692  |  12125.3283 |  -0.0439   |   1.1905  |  0.7329  |  0.3170  |
+|           **Model**           | **Accuracy** | **Balanced Accuracy** | **F1 Score** | **Time Taken** |
+|:-----------------------------:|:------------:|:---------------------:|-------------:|---------------:|
+|      ExtraTreesClassifier     |     0.74     |          0.74         |     0.74     |      0.68      |
+|         LabelSpreading        |     0.72     |          0.74         |     0.72     |      0.83      |
+|        LabelPropagation       |     0.71     |          0.73         |     0.71     |      0.40      |
+|     RandomForestClassifier    |     0.72     |          0.72         |     0.72     |      1.05      |
+|       BaggingClassifier       |     0.69     |          0.69         |     0.69     |      0.15      |
+|         LGBMClassifier        |     0.71     |          0.68         |     0.71     |      5.43      |
+|      KNeighborsClassifier     |     0.64     |          0.64         |     0.64     |      0.06      |
+|     DecisionTreeClassifier    |     0.62     |          0.62         |     0.62     |      0.04      |
+|      ExtraTreeClassifier      |     0.61     |          0.61         |     0.61     |      0.03      |
+|              SVC              |     0.61     |          0.56         |     0.60     |      0.88      |
+|        NearestCentroid        |     0.50     |          0.53         |     0.50     |      0.16      |
+|   LinearDiscriminantAnalysis  |     0.55     |          0.52         |     0.53     |      0.08      |
+|       LogisticRegression      |     0.55     |          0.50         |     0.54     |      0.22      |
+|           LinearSVC           |     0.55     |          0.49         |     0.53     |      0.68      |
+|     CalibratedClassifierCV    |     0.54     |          0.48         |     0.53     |      1.82      |
+|         SGDClassifier         |     0.50     |          0.45         |     0.47     |      0.33      |
+|          BernoulliNB          |     0.46     |          0.41         |     0.44     |      0.03      |
+|           Perceptron          |     0.37     |          0.39         |     0.35     |      0.06      |
+|  PassiveAggressiveClassifier  |     0.35     |          0.37         |     0.31     |      0.06      |
+|           GaussianNB          |     0.25     |          0.35         |     0.20     |      0.02      |
+|        RidgeClassifier        |     0.48     |          0.34         |     0.42     |      0.07      |
+|       RidgeClassifierCV       |     0.48     |          0.33         |     0.42     |      0.11      |
+|       AdaBoostClassifier      |     0.35     |          0.31         |     0.31     |      0.28      |
+| QuadraticDiscriminantAnalysis |     0.21     |          0.29         |     0.14     |      0.06      |
+|        DummyClassifier        |     0.23     |          0.11         |     0.09     |      0.02      |
 
-Tabel 5 : Algorithm Reference
+Tabel 5 : Model Reference
 
-Pada saat menjalankan library yang ada di pycaret, huber regressor memiliki skor mse paling rendah daripada algoritma lain.
+Pada saat menjalankan library lazyclassifier, ExtraTreesClassifier memiliki skor Accuracy dan F-1 Score paling tinggi daripada algoritma lain.
 
 ## Tahapan yang dilakukan
-- Melatih Model dengan data training dengan menggunakan algoritma Huber regressor dan SVR
-- Pada tahap training ini akan dilakukan pengujian model dengan parameter default yang ada pada library
-- Melakukan pengujian dengan data training
+- Melatih Model dengan data training dengan menggunakan algoritma Random Forest, ExtraTreesClassifier, Label Spreading, dan Label Propagation
+
+- Pada tahap awal training, akan dilakukan training model dengan parameter default yang ada pada library
+- Melakukan testing dengan data training
 - Kemudian, lanjut pengujian dengan data testing
-- Pengukuran menggunakan metriks MSE,MAE,RMSE dan R2 dengan menggunakan lirary sklearn.
+- metrik evaluasi menggunakan accuracy dan f1-score dengan menggunakan library sklearn.
 - Melihat hasil performa model antara hasil training dan testing
-- Kemudian tingkatkan performa model dengan menerapkan grid search atau hyper parameter pada model.
-- Untuk hyper param yang digunakan pada Huber Regressor adalah param_grid = { 'epsilon': [1.0, 1.5, 2.0],'alpha': [0.0001, 0.001, 0.01],
-    'max_iter': [100, 200, 300]}
-- Pada SVR param_grid = {'kernel': ['linear', 'rbf'],'C': [0.1, 1, 10],'epsilon': [0.1, 0.2, 0.3]}
-- Dari pengujian hyperparam , mendapatkan param yang terbaik yaitu {'alpha': 0.01, 'epsilon': 2.0, 'max_iter': 200} pada model huber
-- Sedangkan SVR {'C': 10, 'epsilon': 0.1, 'kernel': 'linear'}
+- Kemudian tingkatkan performa model dengan menerapkan grid search atau hyperparameter tuning pada model.
+- Untuk hyperparameter tuning yang digunakan pada Random Forest adalah 
+param_grid = { 'n_estimators': [100,200,300,400,500],
+'max_features': ['auto', 'sqrt', 'log2'],
+'max_depth' : [3,4,5,6,7,8],
+'criterion' :['gini', 'entropy']}
+- Pada ExtraTreesClassifier 
+param_grid1 =
+{'n_estimators': [10,50,100,300,500,1000],
+'max_features': ['auto', 'sqrt', 'log2',None],
+'max_depth' : [2,3,4,5,6,7,8],
+'criterion' :['gini', 'entropy', 'log_loss']}
+- Dari hyperparameter tuning , mendapatkan parameter yang terbaik yaitu {'criterion': 'entropy', 'max_depth': 8, 'max_features': 'auto', 'n_estimators': 400} pada model Random Forest
+- Sedangkan untuk ExtraTreesClassifier {'criterion': 'entropy', 'max_depth': 8, 'max_features': None, 'n_estimators': 500}
 
-### Hasil Running Model
-|       | Huber_MAE |  SVR_MAE  |    Huber_MSE    |    SVR_MSE     |   Huber_RMSE   |   SVR_RMSE    |   Huber_R2   |   SVR_R2   |
-|-------|-----------|-----------|-----------------|----------------|----------------|---------------|--------------|------------|
-| train | 1905.190  | 2584.369  | 7774691.441     | 13188739.278   | 2788.313       | 3631.630      | 0.391        | -0.034     |
-| test  | 2189.424  | 2907.168  | 11186580.685    | 17854936.225   | 3344.635       | 4225.510      | 0.325        | -0.078     |
-Table 6 : Hasil training dan testing tanpa param
-Dari tabel diatas dapat dijelaskan bahwa:
-* Huber_MAE: Rata-rata absolut dari selisih antara nilai prediksi dan nilai aktual pada data train adalah sekitar 1905.190, sedangkan pada data test sekitar 2189.424. Ini menunjukkan bahwa model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
+### Hasil Penerapan Model untuk Blind Testing Sumur NEWBY
+|   |       **Model type** | **Acuracy** | **F-1 Score** |
+|--:|---------------------:|------------:|--------------:|
+| 0 |        Random Forest |        0.48 |          0.49 |
+| 1 | ExtraTreesClassifier |        0.51 |          0.51 |
+| 2 |       LabelSpreading |        0.46 |          0.48 |
+| 3 |     LabelPropagation |        0.46 |          0.47 |
+Table 6 : Hasil Penerapan Model dengan model default
+|   |           Model type | Acuracy | F-1 Score |
+|--:|---------------------:|--------:|----------:|
+| 0 |        Random Forest |    0.53 |      0.53 |
+| 1 | ExtraTreesClassifier |    0.52 |      0.50 |
+| 2 |       LabelSpreading |    0.46 |      0.48 |
+| 3 |     LabelPropagation |    0.46 |      0.47 |
+Table 7 : Hasil Penerapan Model dengan setelah hyperparameter tuning
 
-* SVR_MAE: Rata-rata absolut dari selisih antara nilai prediksi dan nilai aktual pada data train adalah sekitar 2584.369, sedangkan pada data test sekitar 2907.168. Hal ini menunjukkan bahwa model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
+Dari kedua tabel diatas dapat dijelaskan bahwa:
+-   Perbedaan terlihat pada kolom "Acuracy" dan "F-1 Score" untuk setiap model.
+-   Pada Tabel 6 (model default), akurasi model Random Forest adalah 0.48, sedangkan setelah tuning pada Tabel 7, akurasi model tersebut meningkat menjadi 0.53. Ini menunjukkan peningkatan yang signifikan dalam kinerja model setelah tuning.
+-   Pada model ExtraTreesClassifier, akurasi pada Tabel 6 adalah 0.51, sedangkan pada Tabel 7, akurasi tersebut sedikit menurun menjadi 0.52 setelah tuning. Namun, F-1 Score pada model ini mengalami penurunan dari 0.51 menjadi 0.50 setelah tuning.
+-   Dengan demikian, hasil tuning pada hyperparameter hanya memiliki dampak yang signifikan pada model Random Forest, dengan peningkatan kinerja yang cukup besar. Sementara itu, model ExtraTreesClassifier mengalami penurunan sedikit dalam hal akurasi dan F-1 Score setelah tuning, dan model LabelSpreading serta LabelPropagation tidak terpengaruh oleh tuning hyperparameter.
+- Walaupun accuracy saat training model menurun, tetapi jarak overfitting antara hasil testing dengan trainin tidak sejauh sebelum dilakukan hyperparameter tuning
 
-* Huber_MSE: Rata-rata dari kuadrat selisih antara nilai prediksi dan nilai aktual pada data train adalah sekitar 7,774,691.441, sedangkan pada data test sekitar 11,186,580.685. Ini menunjukkan bahwa model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
-
-* SVR_MSE: Rata-rata dari kuadrat selisih antara nilai prediksi dan nilai aktual pada data train adalah sekitar 13,188,739.278, sedangkan pada data test sekitar 17,854,936.225. Hal ini menunjukkan bahwa model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
-
-* Huber_RMSE: Akar kuadrat dari Huber_MSE pada data train adalah sekitar 2,788.313, sedangkan pada data test sekitar 3,344.635. Ini menunjukkan bahwa prediksi model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
-
-* SVR_RMSE: Akar kuadrat dari SVR_MSE pada data train adalah sekitar 3,631.630, sedangkan pada data test sekitar 4,225.510. Hal ini menunjukkan bahwa prediksi model memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test dibandingkan dengan data train.
-
-* Huber_R2: Koefisien determinasi (R-squared) pada data train adalah sekitar 0.391, sedangkan pada data test sekitar 0.325. Ini menunjukkan bahwa model memiliki kemampuan yang lebih baik dalam menjelaskan variasi data pada data train dibandingkan dengan data test.
-
-* SVR_R2: Koefisien determinasi (R-squared) pada data train adalah sekitar -0.034, sedangkan pada data test sekitar -0.078. Hal ini menunjukkan bahwa model memiliki kinerja yang buruk dalam menjelaskan variasi data baik pada data train maupun data test.
-
-Kesimpulannya, terdapat perbedaan kinerja model antara data train dan data test. Model cenderung memiliki tingkat kesalahan yang sedikit lebih tinggi pada data test, menunjukkan adanya overfitting pada data train. Selain itu, koefisien determinasi (R-squared) juga menunjukkan bahwa model memiliki kemampuan yang lebih baik dalam menjelaskan variasi data pada data train dibandingkan dengan data test. Sehingga, perlu adanya penerapan Hyperparam setelah model masuk ke evaluasi
+Kesimpulannya, Secara keseluruhan, hasil tuning hyperparameter dapat memberikan perbaikan pada kinerja model, tetapi dampaknya dapat bervariasi tergantung pada jenis model yang digunakan.
 
 ## Kelebihan dan kekurangan masing-masing algoritma
-- Dari hasil pengujian, Algoritma Huber lebih unggul daripada SVR terhadap data yang dimiliki.
-- Pada Huber memiliki keunggulan yaitu Lebih toleran terhadap outliers dan cenderung memberikan estimasi parameter yang lebih stabil
-- Pada SVR memiliki keunggulan yaitu mampu menangani data yang memiliki hubungan non-linear, kemampuan menangani outliers serta memiliki berbagai macam kernel sesuai dengan yang dibutuhkan.
-- Namun, Huber memiliki kelemahan yaitu kurang fleksibel menangani data non-linear dan membutuhkan penyetelan param yang tepat untuk menghasilkan model terbaik
-- Sedangkan SVR memiliki kelemahan yaitu apabila model semakin kompleks akan berdampak kepada performa processing yang lebih lama dan sangat sensitif terhadap param yang digunakan
+|       Algoritma      |                           Kelebihan                          |                                      Kekurangan                                      |
+|:--------------------:|:------------------------------------------------------------:|:------------------------------------------------------------------------------------:|
+|     Random Forest    | Mampu menangani banyak fitur dengan baik                     | Kompleksitas komputasi yang tinggi                                                   |
+|                      | Mampu menangani atribut tidak relevan atau nilai yang hilang | Rentan terhadap overfitting                                                          |
+|                      | Stabil dan variasi yang rendah dalam estimasi                | Sulit menginterpretasi hubungan antara variabel                                      |
+|                      | Cocok untuk klasifikasi dan regresi                          | Kurang efektif dalam data dengan noise atau outlier tinggi                           |
+|                      | Mampu mengukur pentingnya fitur dalam prediksi               |                                                                                      |
+| ExtraTreesClassifier | Pembentukan model yang lebih cepat                           | Tidak memberikan interpretasi hubungan antara variabel                               |
+|                      | Menangani atribut tidak relevan atau nilai yang hilang       | Kompleksitas komputasi yang tinggi                                                   |
+|                      | Kurang rentan terhadap overfitting                           | Sulit mengevaluasi keberagaman prediksi dalam ensemble                               |
+|                      | Cocok untuk klasifikasi dan regresi                          |                                                                                      |
+|                      | Mampu mengukur pentingnya fitur dalam prediksi               |                                                                                      |
+|    LabelSpreading    | Menangani label terdistribusi tidak merata atau noise        | Kompleksitas komputasi yang tinggi                                                   |
+|                      | Menangani atribut tidak relevan atau nilai yang hilang       | Bergantung pada parameter yang tepat untuk menghindari overfitting atau underfitting |
+|                      | Propagasi label pada data yang belum diberi label            | Sulit menginterpretasi hubungan antara variabel                                      |
+|                      | Hasil yang baik pada data dengan struktur yang kompleks      |                                                                                      |
+|   LabelPropagation   | Menangani label terdistribusi tidak merata atau noise        | Kompleksitas komputasi yang tinggi                                                   |
+|                      | Menangani atribut tidak relevan atau nilai yang hilang       | Bergantung pada parameter yang tepat untuk menghindari overfitting atau underfitting |
+|                      | Propagasi label pada data yang belum diberi label            | Sulit menginterpretasi hubungan antara variabel                                      |
+|                      | Menangani data dengan struktur kompleks dan interaksi rumit  |                                                                                      |
 
 # Evaluasi
 
-### MSE
-Untuk metode evaluasi menggunakan metriks MSE atau Mean Squared Error terhadap model machine learning yang di kembangkan.Cara kerja metriks ini sendiri cukup simpel yaitu semakin kecil angka yang keluar maka model yang dihasilkan semakin baik. MSE memberikan bobot yang lebih besar pada perbedaan yang besar dan juga menghasilkan nilai non-negatif karena nilai dikuadratkan [2]. MSE dihitung dengan cara mengambil perbedaan antara nilai prediksi (ŷ) dan nilai sebenarnya (y) untuk setiap data poin, mengkuadratkannya, dan kemudian mengambil rata-rata dari seluruh perbedaan kuadrat tersebut.
+### Accuracy
+Akurasi adalah metrik umum yang digunakan untuk mengevaluasi kinerja model klasifikasi. Metrik ini mengukur proporsi prediksi yang benar dari total jumlah instance dalam dataset. Akurasi memberikan penilaian keseluruhan tentang sejauh mana model mampu memprediksi label kelas yang benar.
 
-Untuk rumusnya yaitu : MSE = $$\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+Untuk rumusnya yaitu : Akurasi = (Jumlah prediksi yang benar) / (Total jumlah instance)
 
-* Dimana n adalah jumlah data poin dalam dataset 
-* y adalah nilai sebenarnya dari target atau variabel yang diprediksi 
-* ŷ adalah nilai prediksi dari target atau variabel yang diprediksi.
+### F-1 Score
+Nilai F1-Score berkisar antara 0 hingga 1, di mana nilai 1 menunjukkan kinerja model yang sempurna dalam memprediksi kelas yang benar. F1-Score memberikan informasi tentang keseimbangan antara presisi dan kepekaan, yang penting dalam kasus di mana kelas yang tidak seimbang atau biaya kesalahan yang tidak merata.
 
-### MAE
-MAE merupakan metrik evaluasi yang mengukur rata-rata selisih absolut antara nilai prediksi dan nilai sebenarnya [2]. Dimana, semakin kecil angka maka performa semakin baik. MAE juga memberikan gambaran tentang seberapa besar kesalahan prediksi dalam satuan yang sama dengan variabel target.
+-   Presisi (precision) mengukur sejauh mana model memberikan prediksi yang benar dari semua prediksi positif yang dilakukan. Presisi diperoleh dengan membagi jumlah prediksi positif yang benar dengan jumlah total prediksi positif (benar dan salah).
+-   Kepekaan (recall) mengukur sejauh mana model mampu mengidentifikasi semua instance positif yang sebenarnya. Kepekaan diperoleh dengan membagi jumlah prediksi positif yang benar dengan jumlah total instance positif yang sebenarnya dalam dataset.
 
-Rumus : MAE = $$\frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
-### RMSE 
-RMSE merupakan akar kuadrat dari MSE dan digunakan untuk mengukur akurasi rata-rata prediksi [2].memberikan gambaran tentang seberapa besar kesalahan prediksi dalam satuan yang sama dengan variabel target.
+F1-Score memberikan nilai yang lebih baik daripada menggunakan presisi atau kepekaan saja, karena menggabungkan keduanya dalam satu ukuran yang seimbang. F1-Score lebih tepat digunakan dalam kasus ketimpangan kelas, di mana penilaian yang seimbang antara prediksi benar dan pengabaian instance negatif sangat penting.
+Untuk rumusnya yaitu : F1-Score = 2 * (Presisi * recall) / (Presisi + Recall)
 
-Rumus : RMSE = $$\sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$
 
-### R-Squared (R2)
-R-squared (R2) merupakan metrik evaluasi yang mengukur seberapa baik model regresi dapat menjelaskan variasi data [2]. Metriks ini memiliki rentang nilai antara 0 hingga 1, dimana nilai 1 menunjukkan bahwa model dapat menjelaskan seluruh variasi data dengan sempurna.
+|   |           Model type | Acuracy | F-1 Score |
+|--:|---------------------:|--------:|----------:|
+| 0 |        Random Forest |    0.53 |      0.53 |
+| 1 | ExtraTreesClassifier |    0.52 |      0.50 |
+| 2 |       LabelSpreading |    0.46 |      0.48 |
+| 3 |     LabelPropagation |    0.46 |      0.47 |
 
-RUMUS = R2 = $$1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}$$
+Tabel 8 : Hasil Evaluasi Model 
+Berdasarkan tabel 8 yang diberikan,dapat diambil kesimpulan bahwa model terbaik adalah model random forest setelah dilakukan hyperparameter tuning. karena model memberikan skor pengujian paling baik diantara keempat model. Model Random Forest memiliki tingkat kesalahan yang lebih rendah antara data pelatihan dan evaluasi.
 
-|     Index    | Huber_MAE | SVR_MAE |  Huber_MSE  |   SVR_MSE    | Huber_RMSE |  SVR_RMSE   |  Huber_R2   |  SVR_R2   |
-|:------------:|:---------:|:-------:|:-----------:|:------------:|:----------:|:-----------:|:-----------:|:---------:|
-|    train     | 1905.190  | 2584.369| 7774691.441 | 13188739.278 | 2788.313   | 3631.630    | 0.390       | -0.034    |
-|     test     | 2189.424  | 2907.168| 11186580.685| 17854936.225 | 3344.635   | 4225.510    | 0.325       | -0.078    |
-| eval_train   | 1916.916  | 1894.411| 7575414.075 | 8072194.776  | 2752.347   | 2841.161    | 0.406       | 0.367     |
-| eval_test    | 2232.534  | 2181.098| 11010488.333| 11648441.539 | 3318.206   | 3412.981    | 0.335       | 0.297     |
-
-Tabel 7 : Hasil Evaluasi Model 
-Berdasarkan data yang diberikan,dapat diambil kesimpulan bahwa model terbaik adalah model Huber Regression.Hal ini berdasarkan hasil dari setelah model masuk ketahap evaluasi dengan menerapkan hyperparam. Dimana, model menunjukkan nilai skor yang lebih baik secara keseluruhan matriks yang ada. Model huber memiliki tingkat kesalahan yang lebih rendah pada data pelatihan dan evaluasi, serta memiliki kemampuan yang lebih baik dalam menjelaskan variasi dalam data.
-
+### Confusion Matrix
+![messageImage_1685728685966](https://github.com/LukmanAbdiansyah/dicoding-mlt1/assets/74924298/e85c930c-13da-4dd2-b3b6-ecc65c7727ff)
 ## Kesimpulan
 Dari proyek ini dapat disimpulkan Bahwa:
-- Spesifikasi ponsel memiliki keterkaitan terhadap harga ponsel yang dijual, dimana semakin bagus spesifikasi maka semakin mahal pula harganya.
-- Sangat memungkinkan untuk mengimplementasikan model machine learning yang mampu memprediksi harga ponsel berdasarkan spesifikasi yang dimiliki.
-- Fitur yang cukup mempengaruhi harga yaitu Memory Internal, RAM, Resolusi layar dan ukuran layar
-- Sedangkan Baterai tidak terlalu mempengaruhi harga ponsel
-- Huber Memiliki skor MAE 2232.534, MSE 11010488.333 , RMSE 3318.206 dan R2 0.335
-- Sedangkan SVR Memiliki skor MAE 2181.098, MSE 11648441.539 , RMSE 3412.981 dan R2 0.297
-- Dari hasil pengujian Training dan Testing, maka algoritma yang cocok untuk studi kasus ini adalah Huber Regessor yang memiliki nilai evaluasi yang paling bagus.
-- Huber memiliki kemampuan memprediksi kesalahan lebih rendah dan mampu menjelaskan lebih baik variasi dalam data berdasarkan metriks evaluasi.
+- Dengan menggunakan model machine learning, proses klasifikasi facies dapat diotomatisasi, yang akan menghasilkan peningkatan efisiensi dan penghematan waktu yang signifikan. sehingga sangat memungkinkan untuk mengimplementasikannya.
+- Fitur NN_M dan PE memiliki pengaruh paling besar terhadap fasies
+- Model machine learning terbaik pada proyek ini adalah Random Forest dengan hyperparameter tuning dimana accuracy training yang didapatkan sebesar 65% dan accuracy blind testing sebesar 53%
+- Random Forest Memiliki F1-score sebesar 53%
+- Sedangkan ExtraTreesClassifier Memiliki skor 50%
+- Fasies Nonmarine Sandstone merupakan fasies dengan hasil prediksi paling banyak benar
+- Dalam proyek ini, model machine learning dapat mempelajari pola-pola kompleks dan relasi antara atribut geologi yang berkontribusi pada klasifikasi facies. Pengetahuan ini dapat digunakan untuk meningkatkan pemodelan dan prediksi lingkungan deposisi serta memahami sifat reservoir hidrokarbon dengan lebih baik.
 
-Dalam proyek ini juga memiliki beberapa kekurangan yaitu :
-* Data testing yang kurang banyak dimana hanya memilki 1359 baris data yang setelah masuk processing menjadi 938. Hal ini dapat membuat model belajar dari sedikit data. Dimana semakin banyak data maka model akan semakin baik dalam mempelajari data yang ada.
-* Perlu adanya pembanding algoritma yang lain seperti Penggunaan algoritma Random Forest, Lasso regression , AdaBoost Regressor dan masih banyak algoritma regresi lainnya.
+terdapat beberapa kekurangan dari proyek ini yaitu :
+* Data yang digunakan cukup sedikit, hanya sebanyak 3232 row, dengan data training sebesar 2215 row, data testing sebesar 554 row, dan blind data testing 463 row. sehingga hasil prediksi model masih banyak kesalahan, karena itu untuk meningkatkan akurasi perlu adanya penambahan data.
+
 
 ### Referensi
-[1]. T. Hastie, R. Tibshirani, and J. Friedman, "The Elements of Statistical Learning: Data Mining, Inference, and Prediction," Springer, 2009. [Online]. Available: [https://www.statlearning.com/](https://www.statlearning.com/)
+[1]. Hall, B. (2016) ‘Facies classification using machine learning’, _The Leading Edge_, 35(10), pp. 906–909. doi:10.1190/tle35100906.1.
 
-[2]. G. James, D. Witten, T. Hastie, and R. Tibshirani, "An Introduction to Statistical Learning: with Applications in R," Springer, 2013. [Online]. Available: [https://www.statlearning.com/](https://www.statlearning.com/)
+[2]. Saroji, S. _et al._ (2021) ‘The implementation of machine learning in lithofacies classification using Multi Well Logs Data’, _Aceh International Journal of Science and Technology_, 10(1), pp. 9–17. doi:10.13170/aijst.10.1.18749.
 
-[3]. R. Patel and A. Sharma, "Predictive Analysis of Smartphone Prices Using Machine Learning Techniques," in *Proceedings of the 3rd International Conference on Computing Methodologies and Communication*, 2021, pp. 471-479.
+[3]. Alaudah, Y. _et al._ (2019) _A machine learning benchmark for facies classification_, _arXiv.org_. Available at: https://arxiv.org/abs/1901.07659 (Accessed: 03 June 2023).
 
-[4]. C. T. Chou, Y. H. Ho, W. J. Chen, and C. W. Tsai, "A Machine Learning-Based Framework for Smartphone Price Prediction," *Information Systems Frontiers*, vol. 22, no. 6, pp. 1749-1763, 2020. [Online]. Available: [https://doi.org/10.1007/s10796-020-10068-0](https://doi.org/10.1007/s10796-020-10068-0)
+[4]. Erzikova, J. (2019) ‘Facies classification FROMWELL logs using machine learning methods: A survey’, _SGEM International Multidisciplinary Scientific GeoConference EXPO Proceedings_ [Preprint]. doi:10.5593/sgem2019/2.1/s07.037.
 
-[5]. K. M. Reddy, K. V. Kumar, and K. R. Reddy, "Prediction of Smartphone Prices Using Machine Learning Algorithms," *International Journal of Advanced Science and Technology*, vol. 28, no. 19, pp. 2060-2072, 2019.
-
-[6]. S. Subhiksha, S. Thota, and J. Sangeetha, "Prediction of Phone Prices Using Machine Learning Techniques," in *Data Engineering and Communication Technology*, K. Raju, R. Senkerik, S. Lanka, and V. Rajagopal (eds), Advances in Intelligent Systems and Computing, vol. 1079, Springer, Singapore, 2020. [Online]. Available: [https://doi.org/10.1007/978-981-15-1097-7_65](https://doi.org/10.1007/978-981-15-1097-7_65)
-[7]. E. Güvenç, G. Çetin, and H. Koçak, "Comparison of KNN and DNN Classifiers Performance in Predicting Mobile Phone Price Ranges," *Advances in Artificial Intelligence Research*, vol. 1, no. 1, pp. 19-28, Jan. 2021.
-[8]. Garai, P. (2021). Mobile Phone Specifications and Prices. Kaggle. [Online]. Available: https://www.kaggle.com/datasets/pratikgarai/mobile-phone-specifications-and-prices. [Accessed: 22-05-2023].
-
+[5]. Jaikla, C. (2019). FaciesNet: Machine Learning Applications for Facies Classification in Well Logs.
 
